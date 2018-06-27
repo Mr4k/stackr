@@ -22,9 +22,6 @@ public class SpawnObjectOnClick : NetworkBehaviour {
 
     [Command]
     void CmdSpawn(float x, float y) {
-        if (!canSpawn.canSpawnObject) {
-            return;
-        }
         GameObject obj = Instantiate(target, new Vector3(x, y, 0), Quaternion.identity);
         NetworkServer.Spawn(obj);
     }
@@ -40,7 +37,10 @@ public class SpawnObjectOnClick : NetworkBehaviour {
         Vector2 mousePos = mouseRay.GetPoint(distance);
 
         if (Input.GetMouseButtonDown(0)) {
-            CmdSpawn(mousePos.x, mousePos.y);
+            if (canSpawn.canSpawnObject)
+            {
+                CmdSpawn(mousePos.x, mousePos.y);
+            }
         }	
 	}
 }
