@@ -35,12 +35,13 @@ public class CameraFollow : MonoBehaviour {
             }
         }
 
-        Vector3 targetPosition = new Vector3(
-            topBlock.position.x,
-            topBlock.position.y,
-            transform.position.z);
 
         if (topBlock) {
+            Vector3 targetPosition = new Vector3(
+                topBlock.position.x,
+                topBlock.position.y,
+                transform.position.z);
+            
             target.transform.position = Vector3.Lerp(target.transform.position,
                                              targetPosition,
                                              interpAmount);
