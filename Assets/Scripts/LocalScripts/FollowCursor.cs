@@ -5,7 +5,7 @@ using UnityEngine;
 public class FollowCursor : MonoBehaviour {
     void FixedUpdate()
     {
-        Vector2 mousePosition = MouseInputHandler.instance.GetMouseScreenPosition();
+        Vector2 mousePosition = GameManager.instance.GetComponent<MouseInputHandler>().GetMouseScreenPosition();
         transform.position = mousePosition;
     }
 }

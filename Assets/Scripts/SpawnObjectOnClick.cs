@@ -10,7 +10,7 @@ public class SpawnObjectOnClick : NetworkBehaviour {
 
     private void Start()
     {
-        canSpawn = GetComponent<CanSpawnLinkedObject>();
+        canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>(); 
     }
 
     // Use this for initialization
