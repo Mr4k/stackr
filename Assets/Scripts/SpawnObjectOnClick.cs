@@ -33,7 +33,5 @@ public class SpawnObjectOnClick : NetworkBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             CmdSpawn(mousePos.x, mousePos.y);
         }	
-        print(mousePos);
-        print(Input.mousePosition);
 	}
 }

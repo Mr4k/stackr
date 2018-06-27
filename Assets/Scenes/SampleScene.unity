@@ -249,6 +249,7 @@ GameObject:
   - component: {fileID: 1775664790}
   - component: {fileID: 1775664789}
   - component: {fileID: 1775664788}
+  - component: {fileID: 1775664787}
   m_Layer: 0
   m_Name: camera
   m_TagString: MainCamera
@@ -256,6 +257,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1775664787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1775664786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20ba5b85b4e154ba2a541b11a2e3e13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1775664790}
+  followTag: Block
 --- !u!81 &1775664788
 AudioListener:
   m_ObjectHideFlags: 0
@@ -454,7 +468,7 @@ GameObject:
   - component: {fileID: 2089386822}
   m_Layer: 0
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
