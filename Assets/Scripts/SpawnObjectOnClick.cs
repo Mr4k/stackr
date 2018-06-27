@@ -4,11 +4,17 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class SpawnObjectOnClick : NetworkBehaviour {
-
     public GameObject target;
 
-	// Use this for initialization
-	public override void OnStartServer()
+    private CanSpawnLinkedObject canSpawn;
+
+    private void Start()
+    {
+        canSpawn = GetComponent<CanSpawnLinkedObject>();
+    }
+
+    // Use this for initialization
+    public override void OnStartServer()
 	{
         base.OnStartServer();
 
@@ -16,6 +22,9 @@ public class SpawnObjectOnClick : NetworkBehaviour {
 
     [Command]
     void CmdSpawn(float x, float y) {
+        if (!canSpawn.canSpawnObject) {
+            return;
+        }
         GameObject obj = Instantiate(target, new Vector3(x, y, 0), Quaternion.identity);
         NetworkServer.Spawn(obj);
     }
