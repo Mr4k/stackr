@@ -4,13 +4,15 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class SpawnObjectOnClick : NetworkBehaviour {
-    public GameObject target;
-
+    private GameObject target;
     private CanSpawnLinkedObject canSpawn;
+    private GenerateNewObject newObjectGenerator;
 
     private void Start()
     {
-        canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>(); 
+        canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>();
+        newObjectGenerator = GameManager.instance.GetComponent<GenerateNewObject>();
+        target = newObjectGenerator.GetNextGeneratedShape();
     }
 
     // Use this for initialization
@@ -40,6 +42,7 @@ public class SpawnObjectOnClick : NetworkBehaviour {
             if (canSpawn.canSpawnObject)
             {
                 CmdSpawn(mousePos.x, mousePos.y);
+                target = newObjectGenerator.GetNextGeneratedShape();
             }
         }	
 	}
