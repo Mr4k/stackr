@@ -6,12 +6,7 @@ using UnityEngine.Networking;
 public class SpawnObjectOnClick : NetworkBehaviour {
     private CanSpawnLinkedObject canSpawn;
     private GenerateNewObject newObjectGenerator;
-
-    public void SetParams(CanSpawnLinkedObject newCanSpawn, GenerateNewObject objectGenerator)
-    {
-        canSpawn = newCanSpawn;
-        newObjectGenerator = objectGenerator;
-    }
+    private TurnManager turnManager;
 
     public override void OnStartServer()
 	{
@@ -22,6 +17,7 @@ public class SpawnObjectOnClick : NetworkBehaviour {
     {
         canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>();
         newObjectGenerator = GameManager.instance.GetComponent<GenerateNewObject>();
+        turnManager = gameObject.GetComponent<TurnManager>();
     }
 
     public override void OnStartLocalPlayer()
@@ -83,9 +79,10 @@ public class SpawnObjectOnClick : NetworkBehaviour {
         Vector2 mousePos = mouseRay.GetPoint(distance);
 
         if (Input.GetMouseButtonDown(0)) {
-            if (canSpawn.canSpawnObject)
+            if (canSpawn.canSpawnObject && turnManager.isMyTurn)
             {
                 CmdSpawn(mousePos.x, mousePos.y);
+                turnManager.CmdEndTurn();
             }
         }	
 	}
