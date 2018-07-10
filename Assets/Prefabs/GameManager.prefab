@@ -91,10 +91,13 @@ MonoBehaviour:
   indicatorShapes:
   - {fileID: 1061249710597110, guid: d9eee70dbda2d43529876a613d0c5a5b, type: 2}
   - {fileID: 1821500412224606, guid: 6c5f90d32c5d14ab986e9ebef07689f6, type: 2}
+  - {fileID: 1406681931536656, guid: f3a7f56ba232f4d81ba180040c42cad2, type: 2}
   generatedShapes:
   - {fileID: 1061249710597110, guid: b3ffcd4aa065048eebf90499a91d20f3, type: 2}
   - {fileID: 1516390435251052, guid: a426c34a20ab54b8e8989163e4cdcaca, type: 2}
+  - {fileID: 1458083262275564, guid: 3db778086473843a28280d379a8bdc8f, type: 2}
   queueShapes:
   - {fileID: 1168997948796218, guid: dfd79092d46664ad4a3b37a8d6a83df9, type: 2}
   - {fileID: 1499396325155684, guid: d8a444d34af2642b38f4155587ee5e5c, type: 2}
+  - {fileID: 1991343715020998, guid: 609521a37a14749e78d5b755c57d050e, type: 2}
   queueObject: {fileID: 0}

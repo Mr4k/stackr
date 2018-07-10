@@ -498,7 +498,7 @@ Transform:
   m_Children:
   - {fileID: 411065536}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1424522051
 MonoBehaviour:
@@ -705,6 +705,21 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114897505058355982, guid: eebf29a55ef914fb5b135b4b830ceea3,
+        type: 2}
+      propertyPath: queueShapes.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114897505058355982, guid: eebf29a55ef914fb5b135b4b830ceea3,
+        type: 2}
+      propertyPath: indicatorShapes.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114897505058355982, guid: eebf29a55ef914fb5b135b4b830ceea3,
+        type: 2}
+      propertyPath: generatedShapes.Array.size
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4812491948036720, guid: eebf29a55ef914fb5b135b4b830ceea3, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -735,8 +750,26 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4812491948036720, guid: eebf29a55ef914fb5b135b4b830ceea3, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 114897505058355982, guid: eebf29a55ef914fb5b135b4b830ceea3,
+        type: 2}
+      propertyPath: indicatorShapes.Array.data[3]
+      value: 
+      objectReference: {fileID: 1137709740284308, guid: 34b6d4a1d6a664ceab30296fc4d7bc62,
+        type: 2}
+    - target: {fileID: 114897505058355982, guid: eebf29a55ef914fb5b135b4b830ceea3,
+        type: 2}
+      propertyPath: queueShapes.Array.data[3]
+      value: 
+      objectReference: {fileID: 1676608792343664, guid: b506c940869dd4d3985b42fa924cc78c,
+        type: 2}
+    - target: {fileID: 114897505058355982, guid: eebf29a55ef914fb5b135b4b830ceea3,
+        type: 2}
+      propertyPath: generatedShapes.Array.data[3]
+      value: 
+      objectReference: {fileID: 1346096466499426, guid: 0def99d62608340cf9749ac3ff42c861,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: eebf29a55ef914fb5b135b4b830ceea3, type: 2}
   m_IsPrefabParent: 0
@@ -870,6 +903,7 @@ MonoBehaviour:
   m_SpawnPrefabs:
   - {fileID: 1061249710597110, guid: b3ffcd4aa065048eebf90499a91d20f3, type: 2}
   - {fileID: 1516390435251052, guid: a426c34a20ab54b8e8989163e4cdcaca, type: 2}
+  - {fileID: 1458083262275564, guid: 3db778086473843a28280d379a8bdc8f, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
