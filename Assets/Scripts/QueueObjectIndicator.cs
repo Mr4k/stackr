@@ -3,13 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class QueueObjectIndicator : MonoBehaviour {
+    public static QueueObjectIndicator instance;
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public Vector3[] localPositions;
     private GameObject[] objects = new GameObject[3];
     private int numberOfCurrentObjects = 0;
-
-    void Start () {
-        GameManager.instance.GetComponent<GenerateNewObject>().newShapeSpawned = UpdateQueue;
-	}
 
     public void UpdateQueue (GameObject addedObject) {
         if (numberOfCurrentObjects >= 3) {

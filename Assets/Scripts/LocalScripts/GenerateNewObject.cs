@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using System.Linq;
 
 public class GenerateNewObject : MonoBehaviour {
     public GameObject[] indicatorShapes;
@@ -14,29 +15,64 @@ public class GenerateNewObject : MonoBehaviour {
 
     private Queue<int> indexShapeQueue = new Queue<int>();
     private CanSpawnLinkedObject canSpawn;
-    private GameObject currentIndicator; 
+    private GameObject currentIndicator;
 
 	void Start () {
+        queueObject = QueueObjectIndicator.instance;
         newShapeSpawned = queueObject.UpdateQueue;
-        newShapeSpawned(queueShapes[0]);
-        currentIndicator = Instantiate(indicatorShapes[0], transform.position, Quaternion.identity, transform);
+        canSpawn = GetComponent<CanSpawnLinkedObject>();
+	}
 
-        for (int i = 0; i < 2; ++i) {
+    public int[] GetQueueAsList() 
+    {
+        return indexShapeQueue.ToArray<int>();    
+    }
+
+    public void InitializeQueueServer() {
+        for (int i = 0; i < 3; ++i) 
+        {
             int nextIndex = Random.Range(0, indicatorShapes.Length);
             indexShapeQueue.Enqueue(nextIndex);
             if (newShapeSpawned != null)
             {
                 newShapeSpawned(queueShapes[nextIndex]);
             }
+            if (i == 0)
+            {
+                currentIndicator = Instantiate(indicatorShapes[nextIndex], transform.position, Quaternion.identity, transform);
+                canSpawn.detector = currentIndicator.GetComponent<DetectInvalidPosition>();
+            }
         }
+    }
 
-        canSpawn = GetComponent<CanSpawnLinkedObject>();
-        canSpawn.detector = currentIndicator.GetComponent<DetectInvalidPosition>();
-	}
+    public void InitializeQueueClient(int[] addedObjects) 
+    {
+        for (int i = 0; i < addedObjects.Length; ++i)
+        {
+            int nextIndex = addedObjects[i];
+            indexShapeQueue.Enqueue(nextIndex);
+            if (newShapeSpawned != null)
+            {
+                newShapeSpawned(queueShapes[nextIndex]);
+            }
+            if (i == 0)
+            {
+                currentIndicator = Instantiate(indicatorShapes[nextIndex], transform.position, Quaternion.identity, transform);
+                canSpawn.detector = currentIndicator.GetComponent<DetectInvalidPosition>();
+            }
+        }    
+    }
 
-    public GameObject GetNextGeneratedShape() {
-        int nextIndex = indexShapeQueue.Dequeue();
-        GameObject nextGameObject = generatedShapes[nextIndex];
+    public GameObject GetNextShape() 
+    {
+        int nextIndex = indexShapeQueue.Peek();
+        return generatedShapes[nextIndex];
+    }
+
+    public int UpdateQueueServer() {
+        indexShapeQueue.Dequeue();
+        int nextIndex = indexShapeQueue.Peek();
+
         GameObject nextIndicator = Instantiate(indicatorShapes[nextIndex], transform.position, Quaternion.identity, transform);
         canSpawn.detector = nextIndicator.GetComponent<DetectInvalidPosition>();
 
@@ -50,6 +86,23 @@ public class GenerateNewObject : MonoBehaviour {
             newShapeSpawned(queueShapes[addedIndex]);
         }
 
-        return nextGameObject;
+        return addedIndex;
+    }
+
+    public void UpdateQueueClient(int addedIndex) {
+        indexShapeQueue.Dequeue();
+        int nextIndex = indexShapeQueue.Peek();
+
+        GameObject nextIndicator = Instantiate(indicatorShapes[nextIndex], transform.position, Quaternion.identity, transform);
+        canSpawn.detector = nextIndicator.GetComponent<DetectInvalidPosition>();
+
+        Destroy(currentIndicator);
+        indexShapeQueue.Enqueue(addedIndex);
+        currentIndicator = nextIndicator;
+
+        if (newShapeSpawned != null)
+        {
+            newShapeSpawned(queueShapes[addedIndex]);
+        }
     }
 }

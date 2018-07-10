@@ -88,7 +88,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be6a264570a7a4a639708cc91965016b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1061249710597110, guid: b3ffcd4aa065048eebf90499a91d20f3, type: 2}
 --- !u!114 &114707599321891340
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -120,4 +119,4 @@ MonoBehaviour:
     i14: 83
     i15: 132
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  m_LocalPlayerAuthority: 1

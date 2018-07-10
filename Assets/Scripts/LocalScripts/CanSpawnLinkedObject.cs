@@ -6,7 +6,13 @@ public class CanSpawnLinkedObject : MonoBehaviour {
     public DetectInvalidPosition detector;
     public bool canSpawnObject {
         get {
-            return detector.isValid;
+            if (detector) 
+            {
+                return detector.isValid;
+            }
+            else {
+                return false;
+            }
         }
     }
 }

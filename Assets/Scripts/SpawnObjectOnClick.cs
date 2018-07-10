@@ -4,28 +4,72 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class SpawnObjectOnClick : NetworkBehaviour {
-    private GameObject target;
     private CanSpawnLinkedObject canSpawn;
     private GenerateNewObject newObjectGenerator;
 
-    private void Start()
+    public void SetParams(CanSpawnLinkedObject newCanSpawn, GenerateNewObject objectGenerator)
     {
-        canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>();
-        newObjectGenerator = GameManager.instance.GetComponent<GenerateNewObject>();
-        target = newObjectGenerator.GetNextGeneratedShape();
+        canSpawn = newCanSpawn;
+        newObjectGenerator = objectGenerator;
     }
 
-    // Use this for initialization
     public override void OnStartServer()
 	{
         base.OnStartServer();
-
 	}
 
+    public override void OnStartClient()
+    {
+        canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>();
+        newObjectGenerator = GameManager.instance.GetComponent<GenerateNewObject>();
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        CmdStartQueue();
+    }
+
     [Command]
-    void CmdSpawn(float x, float y) {
-        GameObject obj = Instantiate(target, new Vector3(x, y, 0), Quaternion.identity);
+    void CmdStartQueue() 
+    {
+        print("Started queue on server with: " + isLocalPlayer.ToString());
+        if (isLocalPlayer)
+        {
+            newObjectGenerator.InitializeQueueServer(); 
+        }
+        else  
+        {
+            RpcStartQueue(newObjectGenerator.GetQueueAsList());
+        }
+    }
+
+    [ClientRpc]
+    void RpcStartQueue(int[] addedObjects)
+    {
+        if (isServer)
+        {
+            return;
+        }
+        newObjectGenerator.InitializeQueueClient(addedObjects);
+    }
+
+    [Command]
+    void CmdSpawn(float x, float y) 
+    {
+        GameObject obj = Instantiate(newObjectGenerator.GetNextShape(), new Vector3(x, y, 0), Quaternion.identity);
         NetworkServer.Spawn(obj);
+        int addedIndex = newObjectGenerator.UpdateQueueServer();
+        RpcPropagateQueueUpdates(addedIndex);
+    }
+
+    [ClientRpc]
+    void RpcPropagateQueueUpdates(int nextAddedObject) 
+    {
+        if (isServer)
+        {
+            return;
+        }
+        newObjectGenerator.UpdateQueueClient(nextAddedObject);
     }
 	
 	// Update is called once per frame
@@ -42,7 +86,6 @@ public class SpawnObjectOnClick : NetworkBehaviour {
             if (canSpawn.canSpawnObject)
             {
                 CmdSpawn(mousePos.x, mousePos.y);
-                target = newObjectGenerator.GetNextGeneratedShape();
             }
         }	
 	}
