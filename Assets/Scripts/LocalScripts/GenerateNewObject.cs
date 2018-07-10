@@ -11,8 +11,8 @@ public class GenerateNewObject : MonoBehaviour {
 
     public delegate void NewShapeSpawned(GameObject newObject);
     public NewShapeSpawned newShapeSpawned;
-    public QueueObjectIndicator queueObject;
 
+    private QueueObjectIndicator queueObject;
     private Queue<int> indexShapeQueue = new Queue<int>();
     private CanSpawnLinkedObject canSpawn;
     private GameObject currentIndicator;

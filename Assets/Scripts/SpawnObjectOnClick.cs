@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class SpawnObjectOnClick : NetworkBehaviour {
     private CanSpawnLinkedObject canSpawn;
     private GenerateNewObject newObjectGenerator;
-
+    
     public void SetParams(CanSpawnLinkedObject newCanSpawn, GenerateNewObject objectGenerator)
     {
         canSpawn = newCanSpawn;
