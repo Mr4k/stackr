@@ -7,6 +7,7 @@ public class SpawnObjectOnClick : NetworkBehaviour {
     private CanSpawnLinkedObject canSpawn;
     private GenerateNewObject newObjectGenerator;
     private TurnManager turnManager;
+    private GameStateManager gameStateManager;
 
     public override void OnStartServer()
 	{
@@ -18,6 +19,7 @@ public class SpawnObjectOnClick : NetworkBehaviour {
         canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>();
         newObjectGenerator = GameManager.instance.GetComponent<GenerateNewObject>();
         turnManager = gameObject.GetComponent<TurnManager>();
+        gameStateManager = gameObject.GetComponent<GameStateManager>();
     }
 
     public override void OnStartLocalPlayer()
@@ -56,6 +58,7 @@ public class SpawnObjectOnClick : NetworkBehaviour {
         NetworkServer.Spawn(obj);
         int addedIndex = newObjectGenerator.UpdateQueueServer();
         RpcPropagateQueueUpdates(addedIndex);
+        gameStateManager.TestBlockAndEndTurn(obj);
     }
 
     [ClientRpc]
@@ -82,7 +85,6 @@ public class SpawnObjectOnClick : NetworkBehaviour {
             if (canSpawn.canSpawnObject && turnManager.isMyTurn)
             {
                 CmdSpawn(mousePos.x, mousePos.y);
-                turnManager.CmdEndTurn();
             }
         }	
 	}
