@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class QueueObjectIndicator : MonoBehaviour {
     public static QueueObjectIndicator instance;
+    public GenerateNewObject newObjectGenerator;
     void Awake()
     {
         if (instance == null)
@@ -14,6 +15,8 @@ public class QueueObjectIndicator : MonoBehaviour {
         {
             Destroy(gameObject);
         }
+
+        newObjectGenerator.newShapeSpawned = UpdateQueue;
     }
 
     public Vector3[] localPositions;

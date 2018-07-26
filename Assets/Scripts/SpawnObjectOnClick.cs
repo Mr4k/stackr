@@ -18,6 +18,7 @@ public class SpawnObjectOnClick : NetworkBehaviour {
         canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>();
         newObjectGenerator = GameManager.instance.GetComponent<GenerateNewObject>();
         turnManager = gameObject.GetComponent<TurnManager>();
+        newObjectGenerator.newIndicatorSpawned = ReceiveNewIndicator;
     }
 
     public override void OnStartLocalPlayer()
@@ -67,9 +68,9 @@ public class SpawnObjectOnClick : NetworkBehaviour {
         }
         newObjectGenerator.UpdateQueueClient(nextAddedObject);
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    void RequestSpawn()
+    {
         if (!isLocalPlayer)
             return;
         Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -78,12 +79,30 @@ public class SpawnObjectOnClick : NetworkBehaviour {
         projectionPlane.Raycast(mouseRay, out distance);
         Vector2 mousePos = mouseRay.GetPoint(distance);
 
-        if (Input.GetMouseButtonDown(0)) {
-            if (canSpawn.canSpawnObject && turnManager.isMyTurn)
+        if (turnManager.isMyTurn)
+        {
+            Vector3 positionVector;
+            if (canSpawn.canSpawnObject)
             {
                 CmdSpawn(mousePos.x, mousePos.y);
                 turnManager.CmdEndTurn();
             }
-        }	
-	}
+            else if (canSpawn.GetLastValidPosition(out positionVector))
+            {
+                CmdSpawn(positionVector.x, positionVector.y);
+                turnManager.CmdEndTurn();
+            }
+        }
+    }
+
+    void ReceiveNewIndicator(GameObject newIndicator)
+    {
+        if (newIndicator)
+        {
+            if (newIndicator.GetComponent<FollowCursor>() != null)
+            {
+                newIndicator.GetComponent<FollowCursor>().MouseDisengaged = RequestSpawn;
+            }
+        }
+    }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Linq;
+using UnityEngine.Events;
 
 public class GenerateNewObject : MonoBehaviour {
     public GameObject[] indicatorShapes;
@@ -12,14 +13,14 @@ public class GenerateNewObject : MonoBehaviour {
     public delegate void NewShapeSpawned(GameObject newObject);
     public NewShapeSpawned newShapeSpawned;
 
-    private QueueObjectIndicator queueObject;
+    public delegate void NewIndicatorSpawned(GameObject newIndicator);
+    public NewIndicatorSpawned newIndicatorSpawned;
+
     private Queue<int> indexShapeQueue = new Queue<int>();
     private CanSpawnLinkedObject canSpawn;
     private GameObject currentIndicator;
 
 	void Start () {
-        queueObject = QueueObjectIndicator.instance;
-        newShapeSpawned = queueObject.UpdateQueue;
         canSpawn = GetComponent<CanSpawnLinkedObject>();
 	}
 
@@ -39,7 +40,12 @@ public class GenerateNewObject : MonoBehaviour {
             }
             if (i == 0)
             {
-                currentIndicator = Instantiate(indicatorShapes[nextIndex], transform.position, Quaternion.identity, transform);
+                Vector3 indicatorPosition = GetNextIndicatorPosition();
+                currentIndicator = Instantiate(indicatorShapes[nextIndex], indicatorPosition, Quaternion.identity, transform);
+                if (newIndicatorSpawned != null)
+                {
+                    newIndicatorSpawned(currentIndicator);
+                }
                 canSpawn.detector = currentIndicator.GetComponent<DetectInvalidPosition>();
             }
         }
@@ -57,7 +63,12 @@ public class GenerateNewObject : MonoBehaviour {
             }
             if (i == 0)
             {
-                currentIndicator = Instantiate(indicatorShapes[nextIndex], transform.position, Quaternion.identity, transform);
+                Vector3 indicatorPosition = GetNextIndicatorPosition();
+                currentIndicator = Instantiate(indicatorShapes[nextIndex], indicatorPosition, Quaternion.identity, transform);
+                if (newIndicatorSpawned != null)
+                {
+                    newIndicatorSpawned(currentIndicator);
+                }
                 canSpawn.detector = currentIndicator.GetComponent<DetectInvalidPosition>();
             }
         }    
@@ -71,15 +82,9 @@ public class GenerateNewObject : MonoBehaviour {
 
     public int UpdateQueueServer() {
         indexShapeQueue.Dequeue();
-        int nextIndex = indexShapeQueue.Peek();
-
-        GameObject nextIndicator = Instantiate(indicatorShapes[nextIndex], transform.position, Quaternion.identity, transform);
-        canSpawn.detector = nextIndicator.GetComponent<DetectInvalidPosition>();
-
-        Destroy(currentIndicator);
         int addedIndex = Random.Range(0, indicatorShapes.Length);
         indexShapeQueue.Enqueue(addedIndex);
-        currentIndicator = nextIndicator;
+        CreateNextIndicator();
 
         if (newShapeSpawned != null)
         {
@@ -91,18 +96,60 @@ public class GenerateNewObject : MonoBehaviour {
 
     public void UpdateQueueClient(int addedIndex) {
         indexShapeQueue.Dequeue();
-        int nextIndex = indexShapeQueue.Peek();
-
-        GameObject nextIndicator = Instantiate(indicatorShapes[nextIndex], transform.position, Quaternion.identity, transform);
-        canSpawn.detector = nextIndicator.GetComponent<DetectInvalidPosition>();
-
-        Destroy(currentIndicator);
         indexShapeQueue.Enqueue(addedIndex);
-        currentIndicator = nextIndicator;
+        CreateNextIndicator();
 
         if (newShapeSpawned != null)
         {
             newShapeSpawned(queueShapes[addedIndex]);
+        }
+    }
+
+    public Vector3 GetNextIndicatorPosition()
+    {
+        string followTag = "Blocks";
+        GameObject topBlock = null;
+        GameObject[] blocks = GameObject.FindGameObjectsWithTag(followTag);
+
+        float topPosition = -Mathf.Infinity;
+
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            if (blocks[i].transform.position.y > topPosition)
+            {
+                topPosition = blocks[i].transform.position.y;
+                topBlock = blocks[i];
+            }
+        }
+
+        if (topBlock != null)
+        {
+            if (topBlock.GetComponent<Collider2D>() != null)
+            {
+                Vector3 blockSize = topBlock.GetComponent<Collider2D>().bounds.size;
+                float offset = 2.0f;
+                return new Vector3(topBlock.transform.position.x, 
+                                   topBlock.transform.position.y + blockSize.y * 0.5f + offset, 
+                                   -0.3f);
+            }
+        }
+
+        return new Vector3(0.0f, 0.0f, -0.3f);
+    }
+
+    void CreateNextIndicator()
+    {
+        int nextIndex = indexShapeQueue.Peek();
+
+        Vector3 indicatorPosition = GetNextIndicatorPosition();
+        GameObject nextIndicator = Instantiate(indicatorShapes[nextIndex], indicatorPosition, Quaternion.identity, transform);
+        canSpawn.detector = nextIndicator.GetComponent<DetectInvalidPosition>();
+
+        Destroy(currentIndicator);
+        currentIndicator = nextIndicator;
+        if (newIndicatorSpawned != null)
+        {
+            newIndicatorSpawned(currentIndicator);
         }
     }
 }

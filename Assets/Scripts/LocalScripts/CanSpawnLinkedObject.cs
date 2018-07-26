@@ -15,4 +15,18 @@ public class CanSpawnLinkedObject : MonoBehaviour {
             }
         }
     }
+
+    public bool GetLastValidPosition(out Vector3 positionVector)
+    {
+        if (detector)
+        {
+            positionVector = detector.GetLastValidPosition();
+            return true;
+        }
+        else 
+        {
+            positionVector = Vector3.zero;
+            return false;
+        }
+    }
 }

@@ -14,9 +14,17 @@ public class DetectInvalidPosition : MonoBehaviour {
         }
     }
 
+    private Vector3 lastValidPosition;
+    private Vector3 lastPosition;
+
+    public Vector3 GetLastValidPosition()
+    {
+        return lastValidPosition;
+    }
 
     void Start()
     {
+        lastValidPosition = transform.position;
         rend = GetComponent<MeshRenderer>();
     }
 
@@ -31,7 +39,16 @@ public class DetectInvalidPosition : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isValid)
+        {
+            lastValidPosition = lastPosition;
+        }
         numberIntersectingBodies += 1;
         rend.material = invalidMateiral;
+    }
+
+    private void Update()
+    {
+        lastPosition = transform.position;
     }
 }
