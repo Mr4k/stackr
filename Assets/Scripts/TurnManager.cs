@@ -9,13 +9,20 @@ public class TurnManager : NetworkBehaviour {
     private static int numPlayers = 0;
     private static List<int> playerTurns = new List<int>();
     private static int turnIndex = 0;
+    private static bool paused = false;
 
     private static int currentPlayer = -2;
     private int myId = -1;
 
     public bool isMyTurn {
         get {
-            return currentPlayer == myId;
+            return (currentPlayer == myId) && !paused;
+        }
+    }
+
+    public bool isPaused {
+        get {
+            return paused;
         }
     }
 
@@ -47,13 +54,19 @@ public class TurnManager : NetworkBehaviour {
     // TODO try making these synced vars instead
     [ClientRpc]
     void RpcAssignId(int id) {
-        print(id);
-        myId = id;
+        this.myId = id;
     }
 
-    [Command]
-    public void CmdEndTurn() {
-        if (myId == currentPlayer) {
+    [ClientRpc]
+    void RpcAssignPaused(bool shouldPause)
+    {
+        paused = shouldPause;
+    }
+
+    public void EndTurn() {
+        // authoratative server
+        // the rpc interface is in GameStateManager
+        if (isServer) {
             turnIndex++;
             if (turnIndex == playerTurns.Count) {
                 turnIndex = 0;
@@ -61,7 +74,15 @@ public class TurnManager : NetworkBehaviour {
             int nextPlayer = playerTurns[turnIndex];
             RpcSetCurrentPlayer(nextPlayer);
             currentPlayer = nextPlayer;
-            print(currentPlayer);
+        }
+    }
+
+    public void PauseTurn(bool shouldPaused) {
+        // the rpc interface is in GameStateManager
+        if (isServer) {
+            // pause to wait for turn resolution
+            RpcAssignPaused(shouldPaused);
+            paused = shouldPaused;
         }
     }
 
@@ -69,6 +90,5 @@ public class TurnManager : NetworkBehaviour {
     [ClientRpc]
     void RpcSetCurrentPlayer(int newCurrentPlayer) {
         currentPlayer = newCurrentPlayer;
-        print(currentPlayer);
     } 
 }
