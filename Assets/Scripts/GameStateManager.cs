@@ -16,7 +16,7 @@ public class GameStateManager : NetworkBehaviour {
 
     private static GameObject trackingBlock = null;
     private static GameState currentState;
-    private static float lastStableTime = 0;
+    private static float lastUnstableTime = 0;
 
     private TurnManager turnManager;
 
@@ -30,7 +30,7 @@ public class GameStateManager : NetworkBehaviour {
             ServerSetGameState(GameState.Testing);
             trackingBlock = block;
             turnManager.PauseTurn(true);
-            lastStableTime = Time.time;
+            lastUnstableTime = Time.time;
         }
     }
 
@@ -53,21 +53,22 @@ public class GameStateManager : NetworkBehaviour {
 
         switch(currentState) {
             case GameState.Testing:
-                if (Time.time - lastStableTime >= waitTimeBeforeStable) {
-                    turnManager.EndTurn();
-                    ServerSetGameState(GameState.Placing);
-                    // unpause the turn sorry about the name
-                    turnManager.PauseTurn(false);
-                } else {
+                if (Time.time - lastUnstableTime >= waitTimeBeforeStable) {
                     // check if the object seems stable if so wait a little bit to verify
                     Rigidbody2D trackingBlockBody = trackingBlock.GetComponent<Rigidbody2D>();
-                    if (trackingBlockBody.velocity.magnitude > epsilon && trackingBlockBody.angularVelocity > epsilon) {
-                        lastStableTime = Time.time;
+                    if (trackingBlockBody.velocity.magnitude < epsilon && trackingBlockBody.angularVelocity < epsilon)
+                    {
+                        turnManager.EndTurn();
+                        ServerSetGameState(GameState.Placing);
+                        // unpause the turn sorry about the name
+                        turnManager.PauseTurn(false);
+                        break;
                     }
-                    if (Camera.main.WorldToScreenPoint(trackingBlock.transform.position).y < 0) {
-                        ServerSetGameState(GameState.GameOver);
-                        turnManager.PauseTurn(true);
-                    }
+                    lastUnstableTime = Time.time;
+                }
+                if (Camera.main.WorldToScreenPoint(trackingBlock.transform.position).y < 0) {
+                    ServerSetGameState(GameState.GameOver);
+                    turnManager.PauseTurn(true);
                 }
                 break;
         }
