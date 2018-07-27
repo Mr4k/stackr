@@ -139,13 +139,16 @@ public class GenerateNewObject : MonoBehaviour {
 
     void CreateNextIndicator()
     {
+        if (currentIndicator)
+        {
+            Destroy(currentIndicator);
+        }
         int nextIndex = indexShapeQueue.Peek();
 
         Vector3 indicatorPosition = GetNextIndicatorPosition();
         GameObject nextIndicator = Instantiate(indicatorShapes[nextIndex], indicatorPosition, Quaternion.identity, transform);
         canSpawn.detector = nextIndicator.GetComponent<DetectInvalidPosition>();
 
-        Destroy(currentIndicator);
         currentIndicator = nextIndicator;
         if (newIndicatorSpawned != null)
         {

@@ -16,15 +16,16 @@ public class SpawnObjectOnClick : NetworkBehaviour {
 
     public override void OnStartClient()
     {
+        print(isLocalPlayer);
         canSpawn = GameManager.instance.GetComponent<CanSpawnLinkedObject>();
         newObjectGenerator = GameManager.instance.GetComponent<GenerateNewObject>();
         turnManager = gameObject.GetComponent<TurnManager>();
-        newObjectGenerator.newIndicatorSpawned = ReceiveNewIndicator;
         gameStateManager = gameObject.GetComponent<GameStateManager>();
     }
 
     public override void OnStartLocalPlayer()
     {
+        newObjectGenerator.newIndicatorSpawned = ReceiveNewIndicator;
         CmdStartQueue();
     }
 
@@ -74,8 +75,10 @@ public class SpawnObjectOnClick : NetworkBehaviour {
 
     void RequestSpawn()
     {
+        print("Request Spawn Called.");
         if (!isLocalPlayer)
             return;
+        print("Request Spawn called on local player.");
         Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         Plane projectionPlane = new Plane(Vector3.forward, Vector3.zero);
         float distance;
@@ -98,10 +101,13 @@ public class SpawnObjectOnClick : NetworkBehaviour {
 
     void ReceiveNewIndicator(GameObject newIndicator)
     {
-        if (newIndicator)
+        print("Received new indicator that was: " + newIndicator);
+        if (newIndicator != null)
         {
+            print("New indicator was not null.");
             if (newIndicator.GetComponent<FollowCursor>() != null)
             {
+                print("New indicator had follow cursor component.");
                 newIndicator.GetComponent<FollowCursor>().MouseDisengaged = RequestSpawn;
             }
         }

@@ -512,10 +512,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 291b5719920994de79dc4745bf2843be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  newObjectGenerator: {fileID: 1454276567}
   localPositions:
   - {x: 0, y: 3, z: 0}
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: -3, z: 0}
+--- !u!114 &1454276567 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114897505058355982, guid: eebf29a55ef914fb5b135b4b830ceea3,
+    type: 2}
+  m_PrefabInternal: {fileID: 1798304143}
+  m_Script: {fileID: 11500000, guid: 8a731621a63df4c558f7d8871f9a4351, type: 3}
 --- !u!1 &1566258023
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,6 +977,11 @@ Prefab:
       propertyPath: m_AssetId.i15
       value: 123
       objectReference: {fileID: 0}
+    - target: {fileID: 114562190171273984, guid: 55d8f2140fea34e10888ed28b41f137b,
+        type: 2}
+      propertyPath: newObjectGenerator
+      value: 
+      objectReference: {fileID: 1454276567}
     m_RemovedComponents:
     - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 55d8f2140fea34e10888ed28b41f137b, type: 2}
