@@ -34,7 +34,6 @@ public class TurnManager : NetworkBehaviour {
                                 + numPlayers * COLLISION_REDUCTION_DIGITS * 10;
             playerTurns.Add(newPlayerId);
             StartCoroutine(DelayedAssignId(newPlayerId));
-            print(playerTurns);
             if (numPlayers == 1) {
                 currentPlayer = newPlayerId;
                 // TODO wrap this in a coroutine so it will work
