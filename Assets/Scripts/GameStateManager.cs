@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class GameStateManager : NetworkBehaviour {
 
@@ -16,7 +17,7 @@ public class GameStateManager : NetworkBehaviour {
 
     private static GameObject trackingBlock = null;
     private static GameState currentState;
-    private static float lastUnstableTime = 0;
+    private static float lastStableTime = 0;
 
     private TurnManager turnManager;
 
@@ -25,18 +26,27 @@ public class GameStateManager : NetworkBehaviour {
         turnManager = gameObject.GetComponent<TurnManager>();
 	}
 
+    void GameOver()
+    {
+        SceneManager.LoadScene("SampleScenePeter");
+    }
+
     public void TestBlockAndEndTurn(GameObject block) {
         if (turnManager.isMyTurn && isServer) {
             ServerSetGameState(GameState.Testing);
             trackingBlock = block;
             turnManager.PauseTurn(true);
-            lastUnstableTime = Time.time;
+            lastStableTime = Time.time;
         }
     }
 
     [ClientRpc]
     public void RpcSetGameState(GameState state) {
         currentState = state;
+        if (state == GameState.GameOver)
+        {
+            GameOver();
+        }
     }
 
     public void ServerSetGameState(GameState state) {
@@ -53,22 +63,21 @@ public class GameStateManager : NetworkBehaviour {
 
         switch(currentState) {
             case GameState.Testing:
-                if (Time.time - lastUnstableTime >= waitTimeBeforeStable) {
+                if (Time.time - lastStableTime >= waitTimeBeforeStable) {
+                    turnManager.EndTurn();
+                    ServerSetGameState(GameState.Placing);
+                    // unpause the turn sorry about the name
+                    turnManager.PauseTurn(false);
+                } else {
                     // check if the object seems stable if so wait a little bit to verify
                     Rigidbody2D trackingBlockBody = trackingBlock.GetComponent<Rigidbody2D>();
-                    if (trackingBlockBody.velocity.magnitude < epsilon && trackingBlockBody.angularVelocity < epsilon)
-                    {
-                        turnManager.EndTurn();
-                        ServerSetGameState(GameState.Placing);
-                        // unpause the turn sorry about the name
-                        turnManager.PauseTurn(false);
-                        break;
+                    if (trackingBlockBody.velocity.magnitude > epsilon && trackingBlockBody.angularVelocity > epsilon) {
+                        lastStableTime = Time.time;
                     }
-                    lastUnstableTime = Time.time;
-                }
-                if (Camera.main.WorldToScreenPoint(trackingBlock.transform.position).y < 0) {
-                    ServerSetGameState(GameState.GameOver);
-                    turnManager.PauseTurn(true);
+                    if (Camera.main.WorldToScreenPoint(trackingBlock.transform.position).y < 0) {
+                        ServerSetGameState(GameState.GameOver);
+                        turnManager.PauseTurn(true);
+                    }
                 }
                 break;
         }
